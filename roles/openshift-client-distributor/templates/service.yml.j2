@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{openshift_client_distributor_namespace }}
+  annotations:
+  labels:
+    app: {{openshift_client_distributor_name }}
+  name: {{openshift_client_distributor_name }}
+spec:
+  ports:
+  - name: 8080-tcp
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+      app: {{openshift_client_distributor_name }}
+      deploymentconfig: {{openshift_client_distributor_name }}
+  sessionAffinity: None
+  type: ClusterIP

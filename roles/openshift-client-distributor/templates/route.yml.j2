@@ -1,0 +1,20 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  namespace: {{openshift_client_distributor_namespace }}
+  annotations:
+  labels:
+    app: {{openshift_client_distributor_name }}
+  name: {{openshift_client_distributor_name }}
+spec:
+  host: {{openshift_client_distributor_hostname }}
+  port:
+    targetPort: 8080-tcp
+  tls:
+    insecureEdgeTerminationPolicy: Allow
+    termination: edge
+  to:
+    kind: Service
+    name: {{openshift_client_distributor_name }}
+    weight: 100
+  wildcardPolicy: None

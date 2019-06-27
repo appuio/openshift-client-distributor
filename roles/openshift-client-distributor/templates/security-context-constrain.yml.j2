@@ -1,0 +1,8 @@
+kind: SecurityContextConstraints
+apiVersion: v1
+metadata:
+  name: hostaccess
+  labels:
+    app: {{ openshift_client_distributor_name }}
+users:
+- system:serviceaccount:{{ openshift_client_distributor_namespace }}:{{ openshift_client_distributor_name }}

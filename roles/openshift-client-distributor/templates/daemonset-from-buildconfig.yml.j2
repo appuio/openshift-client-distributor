@@ -1,0 +1,63 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  namespace: {{openshift_client_distributor_namespace }}
+  labels:
+    app: {{openshift_client_distributor_name }}
+  name: {{openshift_client_distributor_name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{openshift_client_distributor_name }}
+      deploymentconfig: {{openshift_client_distributor_name }}
+  template:
+    metadata:
+      annotations:
+        alpha.image.policy.openshift.io/resolve-names: '*'
+      labels:
+        app: {{openshift_client_distributor_name }}
+        deploymentconfig: {{openshift_client_distributor_name }}
+    spec:
+      containers:
+        - image: >-
+            docker-registry.default.svc:5000/{{ openshift_client_distributor_namespace }}/{{ openshift_client_distributor_name }}:latest
+          imagePullPolicy: Always
+          name: {{openshift_client_distributor_name }}
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /tmp/js/
+              name: cli-download-customization
+            - mountPath: /usr/share/atomic-openshift
+              name: atomic-openshift
+            - mountPath: /usr/share/origin
+              name: origin
+      dnsPolicy: ClusterFirst
+      nodeSelector:
+        node-role.kubernetes.io/master: "true"
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: {{openshift_client_distributor_name }}
+      serviceAccountName: {{openshift_client_distributor_name }}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: cli-download-customization
+        configMap:
+          name: cli-download-customization
+      - hostPath:
+          path: /usr/share/atomic-openshift
+          type: ""
+        name: atomic-openshift
+      - hostPath:
+          path: /usr/share/origin
+          type: ""
+        name: origin
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate

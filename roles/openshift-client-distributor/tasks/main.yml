@@ -1,0 +1,38 @@
+---
+- name: Create temp directory for doing work in
+  tempfile:
+    state: directory
+  register: tempdir
+  changed_when: false
+
+- name: Copy templates
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ tempdir.path }}/{{ item }}"
+  with_items:
+    - "{{ config.templates_till_buildconfig }}"
+    - "{{ config.templates_after_buildconfig }}"
+
+- name: Create objects
+  k8s:
+    state: present
+    src: "{{ tempdir.path }}/{{ item }}"
+  with_items:
+    - "{{ config.templates_till_buildconfig }}"
+
+- name: wait till build is done
+  wait_for:
+    timeout: 30
+  delegate_to: localhost
+
+- name: Create objects
+  k8s:
+    state: present
+    src: "{{ tempdir.path }}/{{ item }}"
+  with_items:
+    - "{{ config.templates_after_buildconfig }}"
+
+- name: Delete temp directory
+  file:
+    path: "{{ tempdir.path }}"
+    state: absent

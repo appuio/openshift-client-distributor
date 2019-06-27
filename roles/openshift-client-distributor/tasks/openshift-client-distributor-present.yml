@@ -1,0 +1,32 @@
+---
+- name: Create temp directory for doing work in
+  tempfile:
+    state: directory
+  register: tempdir
+  changed_when: false
+
+- block:
+    - name: Copy templates
+      with_list:
+        - openshift-client-distributor.yml
+      copy:
+        src: "{{ item }}"
+        dest: "{{ tempdir.path }}/{{ item }}"
+      changed_when: false
+
+    - name: Apply openshift-client-distributor template
+      openshift_resource:
+        namespace: "{{ openshift_client_distributor_namespace }}"
+        template: "{{ tempdir.path }}/appuio-pruner.yml"
+        app_name: appuio-pruner
+        arguments:
+          NAMESPACE: "{{ openshift_client_distributor_namespace }}"
+          HOSTNAME: "{{ openshift_client_distributor_hostname }}"
+          NAME: "{{ openshift_client_distributor_name }}"
+
+  always:
+    - name: Delete temp directory
+      file:
+        path: "{{ tempdir.path }}"
+        state: absent
+changed_when: false

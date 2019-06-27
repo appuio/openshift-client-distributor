@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: BuildConfig
+metadata:
+  labels:
+    app: {{ openshift_client_distributor_name }}
+  name: {{ openshift_client_distributor_name }}
+  namespace: {{ openshift_client_distributor_namespace }}
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: '{{ openshift_client_distributor_name }}:latest'
+  postCommit: {}
+  resources: {}
+  runPolicy: Serial
+  source:
+    git:
+      uri: 'https://github.com/mabegglen/openshift-client-distributor'
+    type: Git
+  strategy:
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        name: 'python:3.6'
+        namespace: openshift
+    type: Source
+  triggers:
+    - type: ConfigChange
+    - imageChange:
+      type: ImageChange

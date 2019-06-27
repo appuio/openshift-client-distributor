@@ -1,0 +1,4 @@
+---
+openshift_client_distributor_hostname: "client-test.example.com"
+openshift_client_distributor_name: "openshift-client-distributor"
+openshift_client_distributor_namespace: appuio-infra

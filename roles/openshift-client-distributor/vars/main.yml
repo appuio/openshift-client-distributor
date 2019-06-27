@@ -1,0 +1,13 @@
+config:
+  templates_till_buildconfig:
+    - namespace.yml
+    - serviceaccount.yml
+    - security-context-constrain.yml
+    - imagestream.yml
+    - buildconfig.yml
+
+  templates_after_buildconfig:
+    - configmap-cli-download-customization.yml
+    - daemonset-from-buildconfig.yml
+    - route.yml
+    - service.yml

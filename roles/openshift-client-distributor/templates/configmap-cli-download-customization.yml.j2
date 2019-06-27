@@ -1,0 +1,15 @@
+apiVersion: v1
+data:
+  cli-download-customization.js: |+
+    'use strict';
+    window.OPENSHIFT_CONSTANTS.CLI = {
+      "Linux":    "https://{{ openshift_client_distributor_hostname }}/linux/oc",
+      "Windows":  "https://{{ openshift_client_distributor_hostname }}/windows/oc.exe",
+      "Mac OS X": "https://{{ openshift_client_distributor_hostname }}/macosx/oc"
+    };
+kind: ConfigMap
+metadata:
+  namespace: "{{ openshift_client_distributor_namespace }}"
+  name: cli-download-customization
+  labels:
+    app: "{{ openshift_client_distributor_name }}"

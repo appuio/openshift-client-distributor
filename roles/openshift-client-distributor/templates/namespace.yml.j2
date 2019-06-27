@@ -1,0 +1,8 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: {{openshift_client_distributor_namespace }}
+  labels:
+    app: {{openshift_client_distributor_name }}
+  annotations:
+    openshift.io/node-selector: ""
